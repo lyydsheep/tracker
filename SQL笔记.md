@@ -243,7 +243,7 @@ NULL，只能用<b>IS (NOT) NULL</b>进行判断。
 
 ## 三、聚合与排序
 
-### 3.1对标进行聚合查询
+### 3.1对目标进行聚合查询
 
 > ==聚合函数==
 
@@ -311,3 +311,63 @@ WHERE ---> GROUP BY ---> FROM ---> SELECT
 2. GROUP BY子句中用了列的别名：根据SQL语句的执行顺序可知，GROUP BY在SELECT执行之前，因此<u>不能使用SELECT子句中列的别名</u>
 3. GROUP BY子句能排序吗：使用GROUP BY呈现出来的结果是<u>无序的</u>
 4. 在WHERE子句中使用聚合函数：只有SELECT子句和HAVING子句中才能使用聚合函数
+
+### 3.3为聚合结果指定条件
+
+> ==HAVING子句==
+
+​	WHERE子句只能用来指定行条件，要想对组指定条件，就需要使用HAVING子句
+
+```sql
+SELECT <列名1>, <列名2>
+FROM <表名>
+GROUP BY <聚合键>
+HAVING <分组结果对应的条件>;
+```
+
+
+
+与WHERE子句相反，HAVING子句最后执行。
+
+> ==HAVING子句的构成要素==
+
+HAVING子句中能够使用的要素有：
+
+- 常数
+- 聚合函数
+- 聚合键
+
+> ==更适合写在WHERE子句中的条件==
+
+对于GROUP BY子句中聚合键的约束条件，既可以写在WHERE子句中，也可以写在HAVING子句中，但其更适合写在WHERE子句中
+
+- WHERE子句和HAVING子句作用不同：WHERE指定行所对应的条件，单位是行（记录）；HAVING子句指定组所对应的条件，单位是组
+- 执行速度不同
+
+### 3.4对查询结果进行排序
+
+> ORDER BY子句
+
+在SELECT子句末尾添加ORDER BY子句明确排序顺序
+
+若有多个排序键，则从左至右依次起效，如果排序键中数值为null，那么为null的记录要么在最前，要么在最后
+
+```sql
+SELECT <列名>
+FROM <表名>
+ORDER BY <排序键1>, <排序键2> ASC(DESC)
+```
+
+目前为止，子句的书写顺序
+
+SELECT  -->  FROM  -->  WHERE  -->  GROUP BY  -->  HAVING  -->  ORDER BY;
+
+执行顺序：
+
+FROM  -->  WHERE  -->  GROUP BY  -->  HAVING  -->  SELECT  -->  ORDER BY
+
+从执行顺序中可以看出，HAVING子句和GROUP BY子句中不能使用SELECT子句中的别名，而ORDER BY子句中可以使用SELECT子句中的别名
+
+> ==ORDER BY子句中可以使用的字段==
+
+ORDER BY子句中可以使用SELECT子句中未出现的字段，也可以使用聚合函数
