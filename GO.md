@@ -195,3 +195,63 @@ for idx, val := range slice {
 但值得注意的是，第18行代码中，第二个append先执行导致第一个append函数第二个参数变成了对新生成的slice进行截取最后一个元素，即“熘大虾”
 
 最终导致元素重复，插入失败
+
+### 5、流程控制
+
+> switch语句
+
+当switch表达式结果和case表达式结果一致时，就执行该case表达式后面的语句，只有case表达式后面的语句中含有fall through关键字时，才会进行执行下一个case
+
+switch表达式结果的类型必须和case表达式结果类型一致才能进行比较
+
+![image-20240123175924252](https://gitee.com/lyydsheep/pic/raw/master/202401231759433.png)
+
+> for range
+
+range表达式会在每次循环执行时求值一次，被迭代的对象时range表达式结果值的副本，之后的修改只会影响range的值，而不改变循环的次数
+
+![image-20240123182257952](https://gitee.com/lyydsheep/pic/raw/master/202401231822033.png)
+
+### 6、字典
+
+> 字典简介
+
+字典存储的不是单一元素，而是键值对。
+
+键值对总是在一起存储的，在Go语言规范中规定，键的类型==不能是函数、切片、字典==。如果键的类型时接口类型，实际类型==也不能是==以上三种
+
+相反地，任何Go语言对象都能成为字典的值
+
+> 创建字典
+
+有两种方式创建字典：
+
+1、字面量
+
+```go
+var m map[string]int = map[string]int {
+    "1":1, "2":2,
+}
+```
+
+2、使用内置函数make
+
+```go
+foodsMap := make(map[string]int)
+foodsMap["1"] = 1
+foodsMap["2"] = 2
+```
+
+> 删除键值对
+
+使用内置函数delete(map, key)对字典进行删除操作
+
+![image-20240125213937917](https://gitee.com/lyydsheep/pic/raw/master/202401252139101.png)
+
+> 遍历字典
+
+使用for range对字典进行遍历，可以使用_占位符加速遍历
+
+字典遍历的顺序是不固定的，即迭代顺序和插入顺序没有关系
+
+![image-20240125214326385](https://gitee.com/lyydsheep/pic/raw/master/202401252143501.png)

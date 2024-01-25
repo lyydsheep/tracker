@@ -371,3 +371,143 @@ FROM  -->  WHERE  -->  GROUP BY  -->  HAVING  -->  SELECT  -->  ORDER BY
 > ==ORDER BY子句中可以使用的字段==
 
 ORDER BY子句中可以使用SELECT子句中未出现的字段，也可以使用聚合函数
+
+## 四、数据更新
+
+### 4.1数据的插入
+
+> INSERT语句基本语法
+
+```sql
+INSERT INTO <表名> (列名1， 列名2， 列名3...) VALUES (值1，值2，值3...)
+```
+
+列清单必须和值清单一致，否则插入失败
+
+当对表进行全列插入时，列清单可以省略
+
+不仅是INSERT，DELETE和UPDATE等更新语句执行失败时都不会对表中数据造成影响
+
+> 插入默认值
+
+如果表中字段具有DEFAULT约束，那么可以插入默认值
+
+- 显式插入
+
+![image-20240122201044740](https://gitee.com/lyydsheep/pic/raw/master/202401222010153.png)
+
+- 隐式插入：省略被DEFAULT约束的字段即可
+
+在列清单中，被省略的字段如果==有DEFAULT约束的字段设定为该列的默认值==，没有DEFAULT约束则设定为==NULL==
+
+> 从其他表中复制数据
+
+通过使用INSERT语句中的SELECT语句实现从其他表中复制数据
+
+SELECT语句将从其他表中选取出指定数据，这些数据通过INSERT语句插入到目标表中
+
+```SQL
+INSERT INTO <目标表> (<字段1>, <字段2>, <字段3>) SELECT <字段1>, <字段2>, <字段3> FROM <源表> WHERE <查询条件> GROUP BY <关键码>
+```
+
+INSERT语句中的SELECT语句可以使用WHERE子句或者GROUP BY子句等任何SQL语法（但使用ORDER BY子句不会产生任何效果）
+
+==注意：INSERT语句中使用SELECT语句时，不需要VALUES关键字，但是需要字段清单，而SELECT语句中不需要清单==
+
+### 4.2数据的删除
+
+> DROP TABLE语句和DELETE语句
+
+```sql
+DROP TABLE <表名>; #删除表
+```
+
+```sql
+DELETE FROM <表名> #删除表中所有的记录，但保留容器
+```
+
+DELETE语句删除对象是==记录（数据行）==
+
+> 搜索型DELETE语句（指定删除部分数据）
+
+在DELETE语句中使用WHERE子句指定删除数据的条件，达到部分删除的目的
+
+```SQL
+DELETE FROM <表名> WHERE <条件>;
+```
+
+![](https://gitee.com/lyydsheep/pic/raw/master/202401251600030.png)
+
+![](https://gitee.com/lyydsheep/pic/raw/master/202401251557535.png)
+
+### 4.3数据的更新
+
+> UPDATE语句的基本语法
+
+```sql
+UPDATE <表名> SET <字段> = expression
+```
+
+UPDATE语句也是一条DML语句，对数据进行更新操作
+
+![image-20240125160834532](https://gitee.com/lyydsheep/pic/raw/master/202401251608650.png)
+
+> 指定条件的UPDATE语句
+
+UPDATE语句也可以向DELETE语句一样指定条件，对限定的记录进行更新
+
+```SQL
+UPDATE <表名> SET <字段> = expression WHERE <条件>
+```
+
+![image-20240125161334527](https://gitee.com/lyydsheep/pic/raw/master/202401251613642.png)
+
+> 将列值设置为NULL
+
+UPDATE语句中可以将没有NOT NULL约束的字段SET为NULL
+
+![image-20240125173221141](https://gitee.com/lyydsheep/pic/raw/master/202401251732297.png)
+
+> 多列更新
+
+UPDATE语句进行多列更新有两种写法：
+
+第一种方法是用逗号隔开每一个列等值
+
+第二种方法则是采用列、值清单
+
+```SQL 
+UPDATE <表名> SET <字段1> = EXP1, <字段2> = EXP2, <字段3> = EXP3;
+
+UPDATE <表名> SET (列清单) = (值清单);
+```
+
+![image-20240125174145350](https://gitee.com/lyydsheep/pic/raw/master/202401251741467.png)
+
+### 4.4事务
+
+事务就是需要在同一个处理单元内执行的DML语句的集合。
+
+创建事务只需将待执行的DML语句放在事务开始和结束语句之间即可
+
+```SQL
+START TRANSACTION;
+DML1;
+DML2;
+DML3;
+COMMIT/ROLLBACK;
+```
+
+COMMIT	---	提交处理
+
+ROLLBACK	---	取消处理
+
+> ACID特性
+
+Atomicity 原子性：原子性是指事务结束后，其中的DML语句要么全被执行，要么都不执行， DBMS肯定不会只执行其中的若干条。==注意，执行不代表成功==
+
+Consistency 一致性：事务中的处理需要满足数据库提前设置的约束（例如NOT NULL等）
+
+Isolation 隔离性：事务之间互不干扰，在一个事务结束（COMMIT/ROLLBACK）前，其他事务看不到其作用
+
+Durability 持久性：也称耐久性，指一个事务结束后，DBMS能保证该时间点的数据状态被保存的特性
