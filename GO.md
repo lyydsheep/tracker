@@ -255,3 +255,105 @@ foodsMap["2"] = 2
 字典遍历的顺序是不固定的，即迭代顺序和插入顺序没有关系
 
 ![image-20240125214326385](https://gitee.com/lyydsheep/pic/raw/master/202401252143501.png)
+
+### 7、定义函数
+
+Go语言中完整的函数有以下部分：
+
+- 函数名
+- 形参列表
+- 返回列表
+- 函数体
+
+![image-20240126160658427](https://gitee.com/lyydsheep/pic/raw/master/202401261607515.png)
+
+当返回值未命名或只有两个以下的返回值时，返回列表可以无需括号
+
+如果函数名以大写开头，那么该函数时可见的；反之，以小写字母开头则是不可见的
+
+函数类型至取决于==参数列表和返回列表==
+
+一般来说，修改函数的形参不会改变实参，但如果提供的实参时引用类型，例如：切片、字典、通道、函数指针等，对形参的修改会影响实参
+
+> 传递数组
+
+将数组作为实参传递给函数是很低效的，因为在函数内操作形参只是一个副本，作用不大
+
+但如果传递的是指针数组，那么在函数内也可以对实参进行修改
+
+![image-20240126164554309](https://gitee.com/lyydsheep/pic/raw/master/202401261645450.png)
+
+> 传递切片
+
+向函数中提供的实参包含引用类型，例如：指针、切片、字典、通道、函数，即使形参是实参的副本，对形参的修改仍有可能影响到实参
+
+> 函数变量
+
+在使用函数变量之前，需要使用type关键字定义函数变量的类型，相当于取别名
+
+前文提到，函数变量的类型仅与形参列表和返回列表有关
+
+```Go
+type 类型名称 具体类型
+type Hi func(string) string
+```
+
+![image-20240126173354886](https://gitee.com/lyydsheep/pic/raw/master/202401261733058.png)
+
+与函数声明不同，由于函数变量的类型仅与参数列表和返回列表有关，因此在定义函数变量时，func关键字后面紧跟参数列表而非函数名
+
+> 匿名函数
+
+匿名函数就是在声明函数时略去函数名即可，匿名函数同样可以获取和更新外层函数的局部变量
+
+![image-20240126180247869](https://gitee.com/lyydsheep/pic/raw/master/202401261802018.png)
+
+> 闭包
+
+闭包是一个特殊的函数，这个函数引用了外部函数的变量，并维护了这个环境，当外部函数的外部引用这个闭包时，就可以使用这些变量
+
+闭包的核心就是==函数+引用环境==
+
+![image-20240126202820008](https://gitee.com/lyydsheep/pic/raw/master/202401262028142.png)
+
+> 变长函数
+
+参数列表用...type表示形参个数不确定
+
+```go
+func SayHello(words ...string) string {
+    //do something
+}
+```
+
+> defer延迟调用
+
+defer关键字表示延迟调用，无论程序是正常结束还是异常退出，defer都会执行它后面的语句
+
+若有多个defer语句，那么执行顺序为出栈顺序
+
+> panic
+
+当函数调用panic时，正常函数执行会立即停止，但函数中的defer正常执行，之后将panic向上抛给调用函数，直至goroutine中所有函数被终止为止
+
+![image-20240126204620464](https://gitee.com/lyydsheep/pic/raw/master/202401262046584.png)
+
+> recover
+
+recover函数可以用于处理程序运行时错误，终止panic上抛流
+
+panic一般结合defer语句使用
+
+```go
+defer func() {
+    if err := recover(); err != nil {
+        fmt.Println(err)
+    } else {
+        //do something
+    }
+}
+```
+
+如果在defer语句中调用了recover函数，并且定义defer语句的函数内发生了panic，recover能返回panic的信息并终止panic上抛，函数终止并正常返回
+
+![image-20240126205613193](https://gitee.com/lyydsheep/pic/raw/master/202401262056349.png)
