@@ -357,3 +357,61 @@ defer func() {
 如果在defer语句中调用了recover函数，并且定义defer语句的函数内发生了panic，recover能返回panic的信息并终止panic上抛，函数终止并正常返回
 
 ![image-20240126205613193](https://gitee.com/lyydsheep/pic/raw/master/202401262056349.png)
+
+### 8、结构体
+
+> 概述
+
+结构体的格式
+
+```go
+type name struct {
+    var xx type1
+    var xx type2
+}
+```
+
+如果结构体中变量的首字母是大写的，那么该变量是可导出的
+
+Go语言中可见性是包级别的，而不是类型级别的
+
+空结构体没有长度，也没有任何信息
+
+> 结构体初始化方式
+
+结构体有两种初始化方式
+
+- 直接使用字面值进行初始化，此时变量和值一一对对应
+- 显示指明变量名和值
+
+![image-20240129221330190](https://gitee.com/lyydsheep/pic/raw/master/202401292213334.png)
+
+> 匿名成员与结构体嵌套
+
+Go语言在结构体中可以定义不带变量名的结构体成员，这种成员叫做匿名成员
+
+匿名成员必须是一个命名类型或者是命名类型的指针
+
+值得注意的是，出现结构体嵌套时，切记初始化内部的结构体，否则易出错
+
+![image-20240129222401063](https://gitee.com/lyydsheep/pic/raw/master/202401292224212.png)
+
+当结构体有嵌套关系时，外层结构体可以忽略中间结构体直接访问内层结构体的变量（前提是变量可导出）
+
+当结构体只需使用一次时，可以在变量复制时创建匿名结构体并初始化，省略type 和 name
+
+![image-20240129222806975](https://gitee.com/lyydsheep/pic/raw/master/202401292228158.png)
+
+> 结构体与JSON
+
+- 结构体转JSON
+
+通过json.Marshal()方法将结构体转为json，该方法返回一个字节切片和一个error
+
+- JSON转结构体
+
+通过json.UnMarshal()方法将json字节切片转为结构体并赋值到一个具体的变量上
+
+注意；json字符串是以``（飘号）包裹的
+
+![image-20240129225306551](https://gitee.com/lyydsheep/pic/raw/master/202401292253629.png)
