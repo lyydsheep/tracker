@@ -599,3 +599,109 @@ DROP VIEW name;
 只看括号，不分先后
 
 ![image-20240127175008879](https://gitee.com/lyydsheep/pic/raw/master/202401271750992.png)
+
+## 六、函数
+
+### 6.1各种各样的函数
+
+算术函数：
+
+- ABS(x)
+- MOD(n, p)
+- ROUND(n, p)
+
+字符串函数：
+
+- CONCAT(str1, str2)
+- LENGTH(str1)
+- LOWER(str1)
+- UPPER(str1)
+- REPLACE(str1, str2, str3)
+- SUBSTRING(str1 FROM x FOR y)
+
+日期函数：
+
+- CURRENT_TIME()
+- CURRENT_DATE()
+- CURRENT_TIMESTAMP()
+- EXTRACT(YEAR FROM CURRENT_TIMESTAMP)
+
+转换函数：
+
+- CAST(xx AS TYPE)
+- COALESCE(字段1, date)：返回第一个非NULL值
+
+### 6.2谓词
+
+谓词的返回值全都是真值：TRUE、FALSE、UNKNOW
+
+> LIKE谓词
+
+在WHERE子句中用等号进行严格的条件查询，而LIKE谓词可用于模糊条件查询
+
+LIKE模糊查询按照查询位置有前方一致、中间一致、后方一致这三种查询方式：
+
+- 前方一致（前缀）：以查询词开头，并以替代词结尾
+- 中间一致（包含）：以%开头，并以替代词结尾
+- 后方一致（后缀）：以%开头，并以替代词结尾
+
+替代词：
+
+- %：表示0个及以上的字符
+- _：表示1个字符
+
+![image-20240129162649912](https://gitee.com/lyydsheep/pic/raw/master/202401291736465.png)
+
+> BETWEEN...AND...谓词
+
+BETWEEN...AND...谓词用于进行范围查询，作用相当于>和<
+
+![image-20240129163307662](https://gitee.com/lyydsheep/pic/raw/master/202401291633766.png)
+
+> IS (NOT) NULL 谓词	
+
+由于比较运算符=不能作用于NULL，为了对判断/筛选NULL值，可以使用IS (NOT) NULL谓词
+
+![image-20240129163617396](https://gitee.com/lyydsheep/pic/raw/master/202401291636522.png)
+
+> 谓词NOT IN
+
+用于选取（剔除）可能的值
+
+![image-20240129165819014](https://gitee.com/lyydsheep/pic/raw/master/202401291658135.png)
+
+> 子查询作为（NOT）IN谓词的参数
+
+由于在多个SELECT语句的情况下，优先执行内层的查询即子查询。因此子查询可以作为（NOT） IN 谓词的参数，高效查询数据
+
+![image-20240129172658299](https://gitee.com/lyydsheep/pic/raw/master/202401291726388.png)
+
+>EXISTS谓词
+
+EXISTS谓词用于判断记录是否存在，通常指定==关联子查询==作为EXISTS谓词的参数
+
+大部分情况下，（NOT）EXISTS谓词可用（NOT）IN谓词代替
+
+![image-20240129173741562](https://gitee.com/lyydsheep/pic/raw/master/202401291737719.png)
+
+EXISTS谓词只在乎是否有记录，而忽视是具体的哪一列
+
+EXISTS谓词中的子查询参数通常使用SELECT *语句
+
+### 6.3 CASE表达式
+
+> CASE表达式的语法
+
+```SQL
+CASE
+	WHEN <求值表达式> THEN <表达式>
+	WHEN <求值表达式> THEN <表达式>
+	WHEN <求值表达式> THEN <表达式>
+	...
+	ELSE <表达式>
+END
+```
+
+注意不能省略==END==
+
+![image-20240129213006737](https://gitee.com/lyydsheep/pic/raw/master/202401292130976.png)
