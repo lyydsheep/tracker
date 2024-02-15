@@ -415,3 +415,63 @@ Go语言在结构体中可以定义不带变量名的结构体成员，这种成
 注意；json字符串是以``（飘号）包裹的
 
 ![image-20240129225306551](https://gitee.com/lyydsheep/pic/raw/master/202401292253629.png)
+
+### 9、接口
+
+> 什么是接口？
+
+接口是一组方法签名，接口内部定义了许多方法。
+
+当某个类型实现了接口内部的所有方法时，称这个类型实现了接口
+
+> 接口的定义
+
+```go
+type interfaceName interface {
+    F1(xxx) xxx
+    F2(xxx) xxx
+    	.
+    	.
+    	.
+}
+```
+
+> 接口的作用
+
+- 实现多态
+- 解耦与抽象
+- 灵活
+
+> 实现接口
+
+一个类型想要实现接口就必须实现接口中所有方法
+
+![image-20240215165522813](https://gitee.com/lyydsheep/pic/raw/master/202402151655935.png)
+
+类型H实现了接口中的所有方法，类型断言成功
+
+而类型X只实现了部分方法，类型断言失败
+
+> 空接口
+
+空接口中没有任何方法，即所有类型都实现了空接口
+
+> 接口断言
+
+接口断言可以用于判断接口变量的实际类型
+
+```go
+//方法一：
+t, ok := phone(*H)
+//如果断言成功t为接口变量phone的实际值、ok为true，反之为nil、false
+
+
+//方法二：
+switch t := phone.(type) { //返回接口变量phone的实际值给t
+case *H:xxx
+case *X:xxx
+default:xxx
+}
+```
+
+![image-20240215171438781](https://gitee.com/lyydsheep/pic/raw/master/202402151714827.png)
