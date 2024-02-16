@@ -475,3 +475,100 @@ default:xxx
 ```
 
 ![image-20240215171438781](https://gitee.com/lyydsheep/pic/raw/master/202402151714827.png)
+
+### 10、协程与通道
+
+> 什么是协程
+
+在Go语言中，协程是一种轻量级线程，是并发编程的基本单元，有如下特点：
+
+- 轻量：协程不需要占用系统大量资源，开销较小
+- 由Go运行时调度：传统并发编程中需要手动创建、销毁、调度线程，而Go语言中协程由Go运行时自动调度
+- 通信：Go协程之间通过通道进行通信，进行数据在协程之间的传输
+
+> 创建Go协程
+
+通过使用go关键字创建Go协程
+
+go 函数名（实参）
+
+```go
+go FunName(xxx)
+```
+
+![image-20240216120410662](https://gitee.com/lyydsheep/pic/raw/master/202402161204837.png)
+
+> 协程之间的通信
+
+Go语言中协程之间通过通道（chan）进行通信
+
+![image-20240216144123176](https://gitee.com/lyydsheep/pic/raw/master/202402161441247.png)
+
+> 协程同步
+
+使用sync包中的WaitGroup类型变量实现协程同步
+
+每启动一个协程协程计数加一，当一个协程完成后延迟调用done方法使得协程数减一
+
+![image-20240216145105006](https://gitee.com/lyydsheep/pic/raw/master/202402161451078.png)
+
+> 协程的错误处理
+
+使用通道和select语句可以实现协程的错误处理
+
+![image-20240216145644750](https://gitee.com/lyydsheep/pic/raw/master/202402161456877.png)
+
+select语句会在从多通道中选择一个可用的通道操作，可以用于处理通道传输超时情况
+
+> 协程池
+
+协程池是一组预先创建好的协程，可以避免频繁创建、销毁协程的开销
+
+通过缓冲通道实现协程池
+
+```go
+func work(id int, jobs chan int, res chan int) {
+	for job := range jobs {
+		fmt.Printf("%d is process %d\n", id, job)
+		time.Sleep(time.Millisecond * 100)
+		res <- job * 2
+	}
+}
+
+func main() {
+	const jobNum = 5
+	const workerNum = 3
+	jobs := make(chan int, jobNum)
+	res := make(chan int, jobNum)
+
+	var wg sync.WaitGroup
+	for i := 1; i <= workerNum; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			work(i, jobs, res)
+		}(i)
+	}
+
+	for i := 1; i <= jobNum; i++ {
+		jobs <- i
+	}
+	close(jobs)
+	go func() {
+		wg.Wait()
+		close(res)
+	}()
+
+	for i := range res {
+		fmt.Println(i)
+	}
+}
+```
+
+> 协程的取消
+
+使用context包提供的上下文来实现协程的取消
+
+通过调用cancel函数取消协程的执行
+
+![image-20240216154438571](https://gitee.com/lyydsheep/pic/raw/master/202402161544640.png)
